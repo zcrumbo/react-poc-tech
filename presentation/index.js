@@ -15,7 +15,10 @@ import {
   Image,
   Layout,
   Fill,
+  Appear,
 } from 'spectacle';
+
+import CodeSlide from 'spectacle-code-slide';
 
 // Import theme
 import createTheme from 'spectacle/lib/themes/default';
@@ -24,6 +27,8 @@ import jq from '../assets/jq.png';
 import java from '../assets/java.png';
 import reactLogo from '../assets/react.png';
 import vue from '../assets/vue.png';
+import ssrMov from '../assets/ui.gif';
+import rubbr from '../assets/react.jpg';
 
 // Require CSS
 import './slides.css';
@@ -34,7 +39,7 @@ const theme = createTheme(
     primary: 'white',
     secondary: '#1F2022',
     tertiary: '#03A9FC',
-    quarternary: '#CECECE',
+    code: '#bbdcbc',
   },
   {
     primary: 'Montserrat',
@@ -44,7 +49,6 @@ const theme = createTheme(
 
 const ImageBar = ({ active }) => (
   <div className="image-bar">
-    {console.log(active.jq)}
     <Image className={active.jq ? 'active' : 'inactive'} src={jq} />
     <Image className={active.vue ? 'active' : 'inactive'} src={vue} />
     <Image className={active.java ? 'active' : 'inactive'} src={java} />
@@ -66,7 +70,7 @@ export default class Presentation extends React.Component {
           </Text>
         </Slide>
 
-        <Slide transition={['fade']} bgColor="primary">
+        <Slide transition={['slide']} bgColor="primary">
           <ImageBar active={{ jq: true }} />
           <Heading size={1} fit caps lineHeight={1} textColor="secondary">
             Handlebars/jQuery
@@ -76,7 +80,7 @@ export default class Presentation extends React.Component {
           </Text>
         </Slide>
 
-        <Slide transition={['fade']} bgColor="primary">
+        <Slide transition={['slide']} bgColor="primary">
           <ImageBar active={{ jq: true }} />
           <Heading size={1} fit caps lineHeight={1} textColor="secondary">
             Handlebars/jQuery
@@ -87,36 +91,68 @@ export default class Presentation extends React.Component {
           <Layout>
             <Fill>
               <Text margin="10px" bgColor="secondary" textColor="primary">
-                {' '}
-                Pros{' '}
+                Pros
               </Text>
-              <List className="pros">
-                <ListItem>Fewer 3rd Party Dependencies</ListItem>
-                <ListItem>Complete control over lifecycle</ListItem>
-                <ListItem>Componentized Solution</ListItem>
-                <ListItem>Testable (in theory)</ListItem>
-                <ListItem>Global Data Object</ListItem>
-              </List>
+              <Appear>
+                <List className="pros">
+                  <ListItem>Fewer 3rd Party Dependencies</ListItem>
+                  <ListItem>Complete control over lifecycle</ListItem>
+                  <ListItem>Componentized Solution</ListItem>
+                  <ListItem>Testable (in theory)</ListItem>
+                  <ListItem>Simple to Debug (At First)</ListItem>
+                  <ListItem>Global Data Object</ListItem>
+                </List>
+              </Appear>
             </Fill>
             <Fill>
               <Text margin="10px" bgColor="secondary" textColor="primary">
-                {' '}
                 Cons
               </Text>
-              <List className="cons">
-                <ListItem>Imperitive DOM Manipulation</ListItem>
-                <ListItem>No community support</ListItem>
-                <ListItem>Nested logic in templates</ListItem>
-                <ListItem>Manual data binding</ListItem>
-                <ListItem>Manual updates</ListItem>
-                <ListItem>No bundling</ListItem>
-                <ListItem>Global Data Object</ListItem>
-              </List>
+              <Appear>
+                <List className="cons">
+                  <ListItem>Imperative DOM Manipulation</ListItem>
+                  <ListItem>No community support</ListItem>
+                  <ListItem>Nested logic in templates</ListItem>
+                  <ListItem>Manual data binding</ListItem>
+                  <ListItem>Manual updates</ListItem>
+                  <ListItem>No bundling</ListItem>
+                  <ListItem>Difficult to Debug (At Scale)</ListItem>
+                  <ListItem>Global Data Object</ListItem>
+                </List>
+              </Appear>
             </Fill>
           </Layout>
         </Slide>
-
-        <Slide transition={['fade']} bgColor="primary">
+        <CodeSlide
+          showLineNumbers={false}
+          textSize="1.3vw"
+          bgColor="code"
+          lang="handlebars"
+          code={require('raw-loader!./examples/hb.example')}
+          ranges={[
+            { loc: [0, 270], title: '.hbs templates' },
+            { loc: [0, 1], note: 'Starts out simple' },
+            { loc: [0, 3], note: 'Complexity increases' },
+            { loc: [50, 51], note: 'Loading in templates and css' },
+            { loc: [143, 152], note: 'Debugging becomes difficult' },
+          ]}
+        />
+        <CodeSlide
+          textSize="1.3vw"
+          bgColor="code"
+          lang="js"
+          showLineNumbers={false}
+          code={require('raw-loader!./examples/hbjs.example')}
+          ranges={[
+            { loc: [0, 270], title: 'JavaScript Controller Logic' },
+            { loc: [0, 1], note: 'Imperative logic' },
+            { loc: [12, 13], note: 'Imperative logic' },
+            { loc: [107, 115], note: 'Manual rendering' },
+            { loc: [117, 124], note: 'Manual data binding' },
+            { loc: [223, 230], note: 'Lifecycle methods' },
+          ]}
+        />
+        <Slide transition={['slide']} bgColor="primary">
           <ImageBar active={{ vue: true }} />
           <Heading size={1} fit caps lineHeight={1} textColor="secondary">
             Vue.js
@@ -126,7 +162,7 @@ export default class Presentation extends React.Component {
           </Text>
         </Slide>
 
-        <Slide transition={['fade']} bgColor="primary">
+        <Slide transition={['slide']} bgColor="primary">
           <ImageBar active={{ vue: true }} />
           <Heading size={1} caps lineHeight={1} textColor="secondary" textAlign="right">
             Vue.js
@@ -140,31 +176,60 @@ export default class Presentation extends React.Component {
                 {' '}
                 Pros{' '}
               </Text>
-              <List className="pros">
-                <ListItem>Modern JS Framework</ListItem>
-                <ListItem>Componentized Solution</ListItem>
-                <ListItem>Highly Optimized</ListItem>
-                <ListItem>Most Performant</ListItem>
-                <ListItem>Reactive Updates</ListItem>
-                <ListItem>Fewer Dependencies</ListItem>
-                <ListItem>Testable (in theory)</ListItem>
-              </List>
+              <Appear>
+                <List className="pros">
+                  <ListItem>Componentized Solution</ListItem>
+
+                  <ListItem>Highly Optimized</ListItem>
+
+                  <ListItem>Most Performant</ListItem>
+
+                  <ListItem>Reactive Updates</ListItem>
+
+                  <ListItem>Fewer Dependencies</ListItem>
+
+                  <ListItem>Testable (in theory)</ListItem>
+                </List>
+              </Appear>
             </Fill>
             <Fill>
               <Text margin="10px" bgColor="secondary" textColor="primary">
                 {' '}
                 Cons
               </Text>
-              <List className="cons">
-                <ListItem>Compromised Implementation</ListItem>
-                <ListItem>Little Institutional Knowledge</ListItem>
-                <ListItem>Difficult Debugging</ListItem>
-              </List>
+              <Appear>
+                <List className="cons">
+                  <ListItem>Compromised Implementation</ListItem>
+
+                  <ListItem>Little Institutional Knowledge</ListItem>
+
+                  <ListItem>Difficult Debugging</ListItem>
+                </List>
+              </Appear>
             </Fill>
           </Layout>
         </Slide>
-
-        <Slide transition={['fade']} bgColor="primary">
+        <CodeSlide
+          textSize="1.3vw"
+          bgColor="code"
+          lang="js"
+          showLineNumbers={false}
+          code={require('raw-loader!./examples/vue.example')}
+          ranges={[
+            { loc: [0, 474], title: 'Vue/JSP Hybrid' },
+            {
+              loc: [0, 10],
+              note: 'JSTL Logic and markup with data attributes used to bootstrap Vue',
+            },
+            { loc: [99, 108], note: 'Passing props through from JSP to Vue' },
+            { loc: [318, 331], note: 'Vue Components' },
+            { loc: [345, 350], note: 'Lifecycle methods' },
+            { loc: [367, 401], note: 'LESS styling' },
+            { loc: [401, 500], note: 'JS bootstrapping' },
+            { loc: [452, 471], note: 'AJAX in components lazily' },
+          ]}
+        />
+        <Slide transition={['slide']} bgColor="primary">
           <ImageBar active={{ java: true }} />
           <Heading size={1} fit caps lineHeight={1} textColor="secondary">
             JSP/JSTL
@@ -174,7 +239,7 @@ export default class Presentation extends React.Component {
           </Text>
         </Slide>
 
-        <Slide transition={['fade']} bgColor="primary">
+        <Slide transition={['slide']} bgColor="primary">
           <ImageBar active={{ java: true }} />
           <Heading size={1} caps lineHeight={1} textColor="secondary" textAlign="right">
             JSP/JSTL
@@ -185,32 +250,36 @@ export default class Presentation extends React.Component {
           <Layout>
             <Fill>
               <Text margin="10px" bgColor="secondary" textColor="primary">
-                {' '}
-                Pros{' '}
+                Pros
               </Text>
-              <List className="pros">
-                <ListItem>Very Performant</ListItem>
-                <ListItem>Fast Page Load</ListItem>
-                <ListItem>Componentized Solution</ListItem>
-                <ListItem>Few Dependencies</ListItem>
-                <ListItem>Gold Standard SEO</ListItem>
-              </List>
+              <Appear>
+                <List className="pros">
+                  <ListItem>Fastest Complete Page Load</ListItem>
+                  <ListItem>Componentized Solution</ListItem>
+                  <ListItem>Few Dependencies</ListItem>
+                  <ListItem>Gold Standard SEO</ListItem>
+                </List>
+              </Appear>
             </Fill>
             <Fill>
               <Text margin="10px" bgColor="secondary" textColor="primary">
-                {' '}
                 Cons
               </Text>
-              <List className="cons">
-                <ListItem>Very Difficult to Test</ListItem>
-                <ListItem>Awkward User Interactions</ListItem>
-                <ListItem>Difficult to Hold State</ListItem>
-              </List>
+              <Appear>
+                <List className="cons">
+                  <ListItem>Very Difficult to Test</ListItem>
+                  <ListItem>Less Performant UI</ListItem>
+                  <ListItem>Awkward User Interactions</ListItem>
+                  <ListItem>Difficult to Hold State</ListItem>
+                </List>
+              </Appear>
             </Fill>
           </Layout>
         </Slide>
-
-        <Slide transition={['fade']} bgColor="primary">
+        <Slide transition={['slide']} bgColor="primary">
+          <Image src={ssrMov} />
+        </Slide>
+        <Slide transition={['slide']} bgColor="primary">
           <ImageBar active={{ react: true }} />
           <Heading size={1} fit caps lineHeight={1} textColor="secondary">
             React/Redux
@@ -220,7 +289,7 @@ export default class Presentation extends React.Component {
           </Text>
         </Slide>
 
-        <Slide transition={['fade']} bgColor="primary">
+        <Slide transition={['slide']} bgColor="primary">
           <ImageBar active={{ react: true }} />
           <Heading size={1} caps lineHeight={1} textColor="secondary" textAlign="right">
             React/Redux
@@ -234,35 +303,40 @@ export default class Presentation extends React.Component {
                 {' '}
                 Pros{' '}
               </Text>
-              <List className="pros">
-                <ListItem>Modern JS Framework</ListItem>
-                <ListItem>Huge Community</ListItem>
-                <ListItem>Very Performant</ListItem>
-                <ListItem>Componentized Solution</ListItem>
-                <ListItem>Great Build Ecosystem</ListItem>
-                <ListItem>Optimized for Microservices</ListItem>
-                <ListItem>Robust State Management</ListItem>
-                <ListItem>Ridiculously Easy to Test</ListItem>
-              </List>
+              <Appear>
+                <List className="pros">
+                  <ListItem>Huge Community</ListItem>
+                  <ListItem>Very Performant</ListItem>
+                  <ListItem>Componentized Solution</ListItem>
+                  <ListItem>Great Build Ecosystem</ListItem>
+                  <ListItem>Optimized for Microservices</ListItem>
+                  <ListItem>Robust State Management</ListItem>
+                  <ListItem>Ridiculously Easy to Test</ListItem>
+                </List>
+              </Appear>
             </Fill>
             <Fill>
               <Text margin="10px" bgColor="secondary" textColor="primary">
                 {' '}
                 Cons
               </Text>
-              <List className="cons">
-                <ListItem>16(!!) Files for New Component</ListItem>
-                <ListItem>Opinionated Implementation</ListItem>
-                <ListItem>Heavy 3rd Party Dependencies</ListItem>
-                <ListItem>Difficult to Onboard</ListItem>
-                <ListItem>Steep Learning Curve</ListItem>
-              </List>
+              <Appear>
+                <List className="cons">
+                  <ListItem>16(!!) Files for New Component</ListItem>
+                  <ListItem>Opinionated Implementation</ListItem>
+                  <ListItem>Heavy 3rd Party Dependencies</ListItem>
+                  <ListItem>Difficult to Onboard</ListItem>
+                  <ListItem>Steep Learning Curve</ListItem>
+                </List>
+              </Appear>
             </Fill>
           </Layout>
         </Slide>
-
+        <Slide transition={['slide']} bgColor="primary">
+          <Image src={rubbr} />
+        </Slide>
         {false && (
-          <Slide transition={['fade']} bgColor="tertiary">
+          <Slide transition={['slide']} bgColor="tertiary">
             <Heading size={6} textColor="primary" caps>
               Typography
             </Heading>

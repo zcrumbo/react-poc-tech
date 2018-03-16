@@ -1,0 +1,471 @@
+    <%-- Start Shipping Vue component --%>
+    <c:if test="${!stylePage && (products[0].inStock or products[1].inStock)}">
+      <div id="shippingVueWrapper">
+        <div id="productShippingVue"
+           data-product-type="${products[0].productType}"
+             data-is-staggered="${hasStaggered}"
+           data-brand-name="${product.brandName}"
+             data-api-part="${urlPart}${itemId}">
+        </div>
+      </div>
+    </c:if>
+    <%-- End Shipping Vue component --%>
+
+    <%-- Start Promotions Vue component --%>
+    <div id="productPromotionsVue"
+         class="component loading"
+         data-is-style-page="${stylePage}"
+         data-sku="${urlPart}${itemId}"
+         data-is-MAP="${isMAP}">
+    </div>
+    <%-- End Promotions Vue component --%>
+
+
+    <%-- Start of Product Accordion Component --%>
+
+    <c:choose>
+    <%-- Available sizes drop down SHOULD show on style pages, non-cookied variant pages, and wheels (all states).
+    It should NOT show when a Tire fitment has been entered, or Lawn fitment (TBLAWNTIRESIZE cookie) has a value. --%>
+
+
+      <c:when test="${stylePage}">
+        <c:set var="productAvailableSizes" value="true"/>
+      </c:when>
+      <c:otherwise>
+
+        <c:set var="productAvailableSizes" value="true"/>
+        <c:if test="${(hasFitment eq true && product.group eq '55' && hasStaggered) or (not empty cookie:value(request, 'TBLAWNTIRESIZE'))}">
+      <%--  <c:if test="${(hasFitment eq true) or (not empty cookie:value(request, 'TBLAWNTIRESIZE'))}">  leave this commented to remove in order to implement Wheels by Size story TBDIG-3464 --%>
+          <c:set var="productAvailableSizes" value="false"/>
+        </c:if>
+      </c:otherwise>
+    </c:choose>
+    <c:set var="productOverview" value="${products[0].overview}" scope="request"/>
+    <c:set var="productSpecs" value="${products[0].productSpecs.attributeMap}" scope="request"/>
+    <c:set var="productReviews" value="${products[0].productReviews}" scope="request"/>
+    <c:set var="productWarranty"
+           value="${(products[0].group == 30) || (products[0].group == 31) || (products[0].group == 55)}"
+           scope="request"/>
+    <c:choose>
+      <c:when test="${(not empty products[0].salePrice.value) || (not empty products[0].productPromotions)}">
+        <c:set var="productOffers" value="${true}" scope="request"/>
+      </c:when>
+      <c:otherwise>
+        <c:set var="productOffers" value="${false}" scope="request"/>
+      </c:otherwise>
+    </c:choose>
+
+    <div class="productDetailsAccordion">
+      <div class="accordions">
+        <%-- Start Product Available Sizes --%>
+        <c:if test="${productAvailableSizes && product.productVariantCount > 1 && not storage}">
+          <div class="accordion-item-container closed">
+            <ul class="accordion-item accordion-header at_avaiable_sizes">
+              <li>
+                <a id="availableSizes" href="javascript:void(0);"
+                   class=""
+                   data-target-element="availableSizeBtns"
+                   data-component-type="object">
+                                    <span class="accordion-item-text icon">
+                                        <spring:theme code="productDetailsAvailableSizes.text"/>
+                                    </span>
+                  <img class="accordion-action"
+                       src="/_ui/mobile/common/images/plus.svg"
+                       border="0"/>
+                </a>
+              </li>
+            </ul>
+            <ul class="accordion-content">
+              <div class="content">
+                <div id="availSizeBtns">
+                  <h4>Found ${products[0].productVariantCount} available sizes</h4>
+                  <c:forEach items="${products[0].productAvailableDiameters}" var="size"
+                             varStatus="index">
+                    <div class="size-accordion">
+                      <div class="size-accordion-item at_size_accordion_item">
+                        <div class="size-accordion-label">
+                          <h3>${size}&quot; Diameter</h3>
+                        </div>
+
+                        <div class="size-accordion-toggle-btn" data-size="${size}">
+                          <a href="javascript:void(0);" class="u at_product-spec-17">
+                            <img class="size-accordion-action plus"
+                                 src="/_ui/mobile/common/images/plus.svg" border="0">
+                            <img class="size-accordion-action minus hidden"
+                                 src="/_ui/mobile/common/images/minus.svg" border="0">
+                          </a>
+                        </div>
+                      </div>
+
+                      <div class="availableSizesVue size-accordion-content hidden">
+                        <div class="vue-element"
+                             data-style-page="${stylePage}"
+                             data-has-fitment="${hasFitment}"
+                             data-size="${size}"
+                             data-item-id="${itemId}"
+                             data-url-part="style_id=${products[0].brandStyleId}"
+                             data-product-type="${products[0].productType}"
+                           data-coupon-code="${couponCode}">
+                        </div>
+                      </div>
+
+                    </div>
+                  </c:forEach>
+                </div>
+              </div>
+            </ul>
+          </div>
+        </c:if>
+        <%-- End Product Available Sizes --%>
+        <%-- Start Product Overview --%>
+        <c:if test="${not empty productOverview}">
+          <div class="accordion-item-container closed" id="overview">
+            <ul class="accordion-item accordion-header at_overview">
+              <li>
+                <a href="javascript:void(0);"
+                   class="at_product_overview"
+                   data-target-element="productOverviewVue"
+                   data-component-type=""
+                   data-content-url="/_ui/vue/productoverviewcomponent.js">
+                                   <span class="accordion-item-text icon">
+                                       <spring:theme code="productDetailsOverview.text"/>
+                                   </span>
+                  <img class="accordion-action"
+                       src="/_ui/mobile/common/images/plus.svg"
+                       border="0"/>
+                </a>
+              </li>
+            </ul>
+            <ul class="accordion-content">
+              <div class="content">
+                <div id="productOverviewVue"
+                     class="component ${component.uid}"
+                     data-component-id="${component.uid}"
+                     data-component-init="${component.uid}"
+                   data-product-type="${product.productType}"
+                     data-sku="${urlPart}${itemId}">
+                </div>
+              </div>
+            </ul>
+          </div>
+        </c:if>
+
+        <%-- End Product Overview --%>
+        <%-- Start Product Specs --%>
+        <c:if test="${(not empty productSpecs && !stylePage) || product.productVariantCount == 1}">
+          <div class="accordion-item-container closed" id="specs">
+            <ul class="accordion-item accordion-header at_product_specs">
+              <li>
+                <a href="javascript:void(0);"
+                   class="at_product_specs"
+                   data-target-element="productSpecsVueComponent"
+                   data-component-type="">
+                                   <span class="accordion-item-text icon">
+                                       <spring:theme code="productDetailsSpecs.text"/>
+                                   </span>
+                  <img class="accordion-action"
+                       src="/_ui/mobile/common/images/plus.svg"
+                       border="0"/>
+                </a>
+              </li>
+            </ul>
+            <ul class="accordion-content">
+              <div class="content">
+                <div id="productSpecsVueTarget"
+                     class="component ${component.uid}"
+                     data-component-id="${component.uid}"
+                     data-component-init="${component.uid}"
+                     data-sku="${urlPart}${itemId}">
+                </div>
+              </div>
+            </ul>
+          </div>
+        </c:if>
+        <%-- End Product Specs --%>
+
+        <%-- Start Product Reviews --%>
+        <c:if test="${not empty productReviews}">
+          <div class="accordion-item-container closed" id="reviews">
+            <ul class="accordion-item accordion-header at_reviews">
+              <li>
+                <a href="javascript:void(0);"
+                   class="at_product_specs"
+                   data-target-element="productReviewsCall"
+                   data-component-type="">
+                                 <span class="accordion-item-text icon">
+                                     <spring:theme code="productDetailsReviews.text"/>
+                                 </span>
+                  <img class="accordion-action"
+                       src="/_ui/mobile/common/images/plus.svg"
+                       border="0"/>
+                </a>
+              </li>
+            </ul>
+            <ul class="accordion-content">
+              <div class="content">
+                <div id="pr-review-display"
+                     class="component ${component.uid}"
+                     data-component-id="${component.uid}"
+                     data-component-init="${component.uid}"
+                     data-sku="${urlPart}${itemId}">
+                </div>
+              </div>
+            </ul>
+          </div>
+        </c:if>
+        <%-- End Product Reviews --%>
+
+        <%-- Start Product Questions --%>
+        <c:if test="${not empty productReviews}">
+          <div class="accordion-item-container closed" id="qa">
+            <ul class="accordion-item accordion-header at_questions">
+              <li>
+                <a href="javascript:void(0);"
+                   class="at_product_specs"
+                   data-target-element="productQuestionsCall"
+                   data-component-type="">
+                                 <span class="accordion-item-text icon">
+                                     <spring:theme code="productDetailsQ&A.text"/>
+                                 </span>
+                  <img class="accordion-action"
+                       src="/_ui/mobile/common/images/plus.svg"
+                       border="0"/>
+                </a>
+              </li>
+            </ul>
+            <ul class="accordion-content">
+              <div class="content">
+                <div id="pr-question-display"
+                     class="component ${component.uid}"
+                     data-component-id="${component.uid}"
+                     data-component-init="${component.uid}"
+                     data-sku="${urlPart}${itemId}">
+                </div>
+              </div>
+            </ul>
+          </div>
+        </c:if>
+        <%-- End Product Questions --%>
+
+        <%-- Start Product Warranty --%>
+        <c:if test="${not productWarranty}">
+          <div class="accordion-item-container closed" id="warranty">
+            <ul class="accordion-item accordion-header at_warranty">
+              <li>
+                <a href="javascript:void(0);"
+                   class="at_product_warranty"
+                   data-target-element="productWarrantyVue"
+                   data-component-type="">
+                                   <span class="accordion-item-text icon">
+                                       <spring:theme code="productDetailsWarranty.text"/>
+                                   </span>
+                  <img class="accordion-action"
+                       src="/_ui/mobile/common/images/plus.svg"
+                       border="0"/>
+                </a>
+              </li>
+            </ul>
+            <ul class="accordion-content">
+              <div class="content">
+                <div id="productWarrantyVue"
+                     class="component ${component.uid}"
+                     data-component-id="${component.uid}"
+                     data-component-init="${component.uid}"
+                   data-product-type="${product.productType}"
+                     data-sku="${urlPart}${itemId}">
+                </div>
+              </div>
+            </ul>
+          </div>
+        </c:if>
+        <%-- End Product Warranty --%>
+
+        <%-- Start Product Offers --%>
+        <c:if test="${productOffers}">
+          <div class="accordion-item-container closed" id="offers">
+            <ul class="accordion-item accordion-header at_offers">
+              <li>
+                <a href="javascript:void(0);"
+                   class="at_product_offers"
+                   data-target-element="productOffersVueComponent"
+                   data-component-type="">
+                                   <span class="accordion-item-text icon">
+                                       <spring:theme code="productDetailsOffers.text"/>
+                                   </span>
+                  <img class="accordion-action"
+                       src="/_ui/mobile/common/images/plus.svg"
+                       border="0"/>
+                </a>
+              </li>
+            </ul>
+            <ul class="accordion-content">
+              <div class="content">
+                <div id="productOffersVueTarget"
+                     class="component ${component.uid}"
+                     data-component-id="${component.uid}"
+                     data-component-init="${component.uid}"
+                     data-sku="${urlPart}${itemId}"
+                     data-is-MAP="${isMAP}">
+                </div>
+              </div>
+            </ul>
+          </div>
+        </c:if>
+        <%-- End Product Offers --%>
+
+      </div>
+    </div>
+    <%-- End of Product Accordion Component --%>
+<template>
+    <div id="overviewComponentVue" v-bind:class="isLoaded ? '' : loading">
+        <h3 id="name">{{name}}</h3>
+        <div id="category" class="strong" v-if="category">{{category}}</div>
+        <div id="overview" v-html="overview"></div>
+        <div id="featuresTitle" class="strong" v-if="features">Features</div>
+        <ul id="featuresList">
+            <li class="features" v-for="feature in features">
+                <span v-html="feature"></span>
+            </li>
+        </ul>
+    </div>
+</template>
+<script type="text/javascript">
+  export default {
+    data() {
+      return {
+                category: '',
+                features: '',
+                isLoaded: false,
+                loading: "loading",
+        name: '',
+        overview: '',
+        apiUrl: '/services/v2/tirebuyerecomm/product',
+        fields: '&fields=product_features,initial_product_specs,product',
+      }
+    },
+    beforeMount: function () {
+      var vm = this;
+      vm.sku = $('#productOverviewVue').data().sku;
+      vm.productType = $('#productOverviewVue').data().productType;
+            
+      fetchAPIData(
+        `/services/v2/tirebuyerecomm/product?${vm.sku}${vm.fields}&product_type=${vm.productType}`,
+        function (data) {
+          vm.name = data.products[0].brandName + " " + data.products[0].name;
+          data.products[0].initialProductSpecs.attributeMap.some((spec)=>{
+            if(spec.key == 'performanceCategory') {
+                            vm.category = spec.value.value;
+            }
+                    });
+          vm.overview = data.products[0].overview;
+          vm.features = data.products[0].productFeatures;
+          vm.isLoaded = true;
+        });
+    },
+  }
+</script>
+
+<style rel="stylesheet/less" lang="less" scoped>
+    @import "../mobile/components/less/variables.less";
+
+    #overviewComponentVue {
+        #name,
+        #category,
+        #overview,
+        #featuresTitle {
+            display: block;
+            margin-top: 10px;
+        }
+        #overview {
+            p {
+                margin-bottom: 5px;
+            }
+        }
+        #featuresTitle {
+            margin-bottom: 10px;
+        }
+        #featuresList {
+            .features {
+                display: flex;
+                &:before {
+                    content: "\00b0";
+                    color: @base-blue-light;
+                    font-size: 24px;
+                    padding-right: 5px;
+                }
+            }
+        }
+    }
+</style>
+
+
+    return {
+        init: function init() {
+            $('.DefaultProductDetailsComponent').removeClass('loading');
+            __COMPONENT_UID__.initImages();
+            __COMPONENT_UID__.pricingPanel.init();
+            __COMPONENT_UID__.productShippingComponent.init();
+            __COMPONENT_UID__.loadProductPromotionsVue();
+            __COMPONENT_UID__.productDetailsAccordion.init();
+            __COMPONENT_UID__.initReviewsLink();
+            __COMPONENT_UID__.chatComponent.init();
+            __COMPONENT_UID__.wheelVisualizerVueComponent.init();
+            __COMPONENT_UID__.loadMapCartModal.init();
+
+            if ($('a[data-target-element="availableSizeBtns"]')) {
+                $('a[data-target-element="availableSizeBtns"]').click();
+            }
+        },
+        initReviewsLink: function initReviewsLink() {
+            $(document).delegate('.pr-snippet-review-count', 'click', function (event) {
+                event.preventDefault();
+                scrollToElement($('.at_reviews'));
+                var parentElment = $('.at_reviews').parent();
+                if (parentElment.hasClass('closed')) {
+                    $('.at_reviews').trigger('click');
+                }
+            });
+        },
+        availableSizeBtns: {
+            init: function init() {
+                this.bindEvents();
+            },
+            bindEvents: function bindEvents() {
+                $('.size-accordion-item').off('click');
+                $('.size-accordion-item').on('click', function () {
+                    $(this).find('.size-accordion-toggle-btn').toggleClass('open');
+                    $(this).find('.size-accordion-toggle-btn .plus').toggle();
+                    $(this).find('.size-accordion-toggle-btn .minus').toggle();
+
+                    $(this).siblings('.availableSizesVue').toggle(300, function () {
+                        /* If .vue-element exists, the component hasn't loaded and this is the first time displaying it,
+                         * call vue component.
+                         * Else toggle display of existing component. */
+                        var elm, size;
+                        if (elm = $(this).find('.vue-element')[0]) {
+                            // 'size' is the diameter of the tire/wheel
+                            size = $(this).find('.vue-element').data().size;
+                            __COMPONENT_UID__.availableSizeBtns.loadVueComponent(elm, size);
+                        }
+                    });
+                });
+            },
+            loadVueComponent: function loadVueComponent(elm, size) {
+                var vueElem = { elm: elm, size: size };
+                $.ajax({
+                    context: vueElem,
+                    url: '/_ui/vue/productavailablesizesvue.js',
+                    success: function success() {
+                        var elm = this.elm,
+                            size = this.size;
+                        new Vue({
+                            el: elm,
+                            data: { size: size },
+                            render: function render(h) {
+                                return h(productavailablesizesvue);
+                            }
+                        });
+                    }
+                });
+            }
+        },

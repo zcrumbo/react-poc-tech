@@ -1,0 +1,153 @@
+{{#ifCond products.[0].productPromotions.length '>' '0'}}
+    {{#if products.[0].isSellableInZip}}
+        {{#ifCond products.[0].productPromotions.length '>' '1'}}
+            <div class="product-promotions row">
+                <div class="promotion-header row">
+                    {{#if @root.products.[0].displayPromotion}}
+                    <div class="col-md-12">
+                        <strong>More savings available</strong>
+                    </div>
+                    {{/if}}
+                </div>
+                <div class="row">
+
+                    {{#each products.[0].productPromotions}}
+                        {{#ifCond this.promotionType '==' 'RebatePromotion'}}
+                            <div class="mir-main">
+                                <div class="mir-marquee" id="original-mir-marquee">
+                                    <div class="amount">
+                                        ${{this.rebateDollarOff}} back
+                                    </div>
+                                    <div class="pointer">
+                                        <div class="card">
+                                            {{#ifCond this.rebateGiftCardType '==' 'Visa'}}
+                                                <svg class="visa">
+                                                    <use xlink:href="/_ui/mobile/common/images/icons.sprite.svg#rebateVisaLogo" />
+                                                </svg>
+                                            {{/ifCond}}
+                                            {{#ifCond this.rebateGiftCardType '==' 'MasterCard'}}
+                                                <svg class="mastercard">
+                                                    <use xlink:href="/_ui/mobile/common/images/icons.sprite.svg#rebateMasterCardLogo" />
+                                                </svg>
+                                            {{/ifCond}}
+                                            {{#ifCond this.rebateGiftCardType '==' ''}}
+                                                <svg class="visa">
+                                                    <use xlink:href="/_ui/mobile/common/images/icons.sprite.svg#rebateVisaLogo" />
+                                                </svg>
+                                            {{/ifCond}}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="mir-details">
+                                    {{this.title}}
+                                    <a href="{{this.rebatePDFUrl}}">Click for details</a>
+                                </div>
+                                <div class="popOverRebate" id="rebateDescOriginal" data-target="{{this.priority}}">
+                                    <p class="tirePromotionDescription">{{this.description}}</p>
+                                </div>
+                            </div>
+                        {{/ifCond}}
+                        {{#ifCond dollarAmount '&!' @root.page.affiliate}}
+                            {{#ifCond @root.products.[0].displayPromotion '&!' @root.page.isMap}}
+                            <div class="col-md-6">
+                            <div id="availableSTD" class="flex-parent promotion">
+                                <div class="flex inner-container">
+                                    <svg class="bluePromoArrow">
+                                        <use xlink:href="/_ui/mobile/common/images/icons.sprite.svg#bluePromoArrow"/>
+                                    </svg>
+                                    <!-- Preferred Installer Promotion -->
+                                    <div class="flex promo-code at_promo_code_link">
+                                        <sup>&dollar;</sup>
+                                        <h1 class="amount">{{dollarAmount}}</h1>
+                                        <sup class="offText">OFF</sup>
+                                        <span class="tirebuyer-installer-text">when you choose <br>a
+                                            <strong>TireBuyer Installer</strong>
+                                        </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {{/ifCond}}
+                        {{/ifCond}}
+                    {{/each}}
+                </div>
+            </div>
+        {{else}}
+                {{!-- if promotions array only has one item/promotion and it's strikethough, don't show the 'more savings' header, or the rest of the code block --}}
+                {{#if products.[0].productPromotions.[0].strikethroughPrice}}
+                {{else}}
+                    <div class="product-promotions row">
+                    {{#if @root.products.[0].displayPromotion}}
+                        <div class="promotion-header row">
+                            <div class="col-md-12">
+                                <strong>More savings available</strong>
+                            </div>
+                        </div>
+                    {{/if}}
+
+                        {{#each products.[0].productPromotions}}
+                            <div class="row">
+                                <div class="col-md-6">
+                                    {{#ifCond this.promotionType '==' 'RebatePromotion'}}
+                                        <div class="mir-main">
+                                            <div class="mir-marquee" id="original-mir-marquee">
+                                                <div class="amount">
+                                                    ${{this.rebateDollarOff}} back
+                                                </div>
+                                                <div class="pointer">
+                                                    <div class="card">
+                                                        {{#ifCond this.rebateGiftCardType '==' 'Visa'}}
+                                                            <svg class="visa">
+                                                                <use xlink:href="/_ui/mobile/common/images/icons.sprite.svg#rebateVisaLogo" />
+                                                            </svg>
+                                                        {{/ifCond}}
+                                                        {{#ifCond this.rebateGiftCardType '==' 'MasterCard'}}
+                                                            <svg class="mastercard">
+                                                                <use xlink:href="/_ui/mobile/common/images/icons.sprite.svg#rebateMasterCardLogo" />
+                                                            </svg>
+                                                        {{/ifCond}}
+                                                        {{#ifCond this.rebateGiftCardType '==' ''}}
+                                                            <svg class="visa">
+                                                                <use xlink:href="/_ui/mobile/common/images/icons.sprite.svg#rebateVisaLogo" />
+                                                            </svg>
+                                                        {{/ifCond}}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="mir-details">
+                                                {{this.title}}
+                                                <a href="{{this.rebatePDFUrl}}">Click for details</a>
+                                            </div>
+                                            <div class="popOverRebate" id="rebateDescOriginal" data-target="{{this.priority}}">
+                                                <p class="tirePromotionDescription">{{this.description}}</p>
+                                            </div>
+                                        </div>
+                                    {{/ifCond}}
+                                    {{#ifCond dollarAmount '&!' @root.page.affiliate}}
+                                        {{#ifCond  @root.products.[0].displayPromotion '&!' @root.page.isMap }}
+                                            <div id="availableSTD" class="flex-parent promotion">
+                                                <div class="flex inner-container">
+                                                    <svg class="bluePromoArrow">
+                                                        <use xlink:href="/_ui/mobile/common/images/icons.sprite.svg#bluePromoArrow"/>
+                                                    </svg>
+                                                    <!-- Preferred Installer Promotion -->
+                                                    <div class="flex promo-code at_promo_code_link">
+                                                        <sup>&dollar;</sup>
+                                                        <h1 class="amount">{{dollarAmount}}</h1>
+                                                        <sup class="offText">OFF</sup>
+                                                        <span class="tirebuyer-installer-text">when you choose <br>a
+                                                            <strong>TireBuyer Installer</strong>
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        {{/ifCond}}
+                                    {{/ifCond}}
+                                </div>
+                            </div>
+                        {{/each}}
+                    </div>
+                {{/if}}
+        {{/ifCond}}
+    {{/if}}
+{{/ifCond}}

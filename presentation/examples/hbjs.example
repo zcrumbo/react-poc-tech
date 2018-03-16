@@ -1,0 +1,262 @@
+    init: function() {
+        console.log('initing ACC.productRecommedation');
+        // handlebarsHelpers.init();
+        ACC.productRecommendationComponent.populateDataStore();
+
+        if ($('#sticky-anchor-rec').length) {
+            $(window).scroll(function () {
+                ACC.productRecommendationComponent.stickyHeaderRec();
+            });
+        }
+    },
+
+    populateDataStore: function () {
+            var isPrePopulated = false;
+            var dataChanged = false;
+            if (window.dataStore) {
+                if ($.cookie('TBFITMENT')) {
+                    var fitment = $.cookie('TBFITMENT').replace(/_/g, ':')
+                    ACC.productRecommendationComponent.recommendUrl += "?fitments=" + fitment;
+                }
+                if (ACC.productRecommendationComponent.zipcode) {
+                    ACC.productRecommendationComponent.recommendUrl += "&zipcode=" + ACC.productRecommendationComponent.zipcode;
+                }
+
+                //check if rec data has been pre-populated;
+                // render if so
+                if(localStorage.getItem('guideData') !== undefined || localStorage.getItem('guideData') !== ''){
+                    var localData = JSON.parse(localStorage.getItem('guideData'));
+                }
+                if (localData) {
+                    window.dataStore.recommend = localData;
+                    for (var i = 0; i < window.dataStore.recommend.oemProducts.length; i++) {
+                        window.dataStore.recommend.oemProducts[i].qty = 4;
+                    }
+                    for (var k = 0; k < window.dataStore.recommend.recommendedProducts.length; k++) {
+                        window.dataStore.recommend.recommendedProducts[k].qty = 4;
+                    }
+
+                    // ACC.productRecommendationComponent.setImageURL(localData);
+
+                    window.dataStore.recommend.totalRecTires = ACC.productRecommendationComponent.calculateRecTires(window.dataStore);
+
+                    var installerData = localStorage.getItem('guideInstallerData');
+                    if (installerData) {
+                        window.dataStore.recommend.totalInstallers = JSON.parse(installerData).installersCount;
+                        window.dataStore.installers = JSON.parse(installerData);
+                        isPrePopulated = true;
+                        console.log('data is prepopulated - render now')
+                        // TODO: Redo this
+                        // ACC.productRecommendationComponent.getCity(dataStore, ACC.productRecommendationComponent.findComponents);
+                    }
+                }
+
+                ACC.productRecommendationComponent.vehicleImageInit();
+
+                //validate data w/api call and rerender if it has changed
+                $.ajax({
+                    url: ACC.productRecommendationComponent.recommendUrl,
+                    data: data,
+                    success: function (data) {
+                        console.log('checking recommendation data against localStorage');
+
+                        ACC.productRecommendationComponent.setImageURL(data);
+
+                        if (localStorage.getItem('guideData') !== JSON.stringify(data)) {
+                        //     console.log('guide api data changed');
+                            dataChanged = true;
+                            localStorage.setItem('guideData', JSON.stringify(data))
+                            window.dataStore.recommend = data;
+                            for (var i = 0; i < window.dataStore.recommend.oemProducts.length; i++) {
+                                window.dataStore.recommend.oemProducts[i].qty = 4;
+                            }
+                            for (var k = 0; k < window.dataStore.recommend.recommendedProducts.length; k++) {
+                                window.dataStore.recommend.recommendedProducts[k].qty = 4;
+                            }
+                        }
+                        $.ajax({
+                            url: ACC.productRecommendationComponent.installersURL,
+                            installerData: data,
+                            success: function (installerData) {
+                                console.log('checking installer data against localStorage');
+                                if (localStorage.getItem('guideInstallerData') !== JSON.stringify(installerData) || dataChanged) {
+                                    dataChanged = true;
+                                    window.dataStore.recommend.totalRecTires = ACC.productRecommendationComponent.calculateRecTires(dataStore);
+                                    window.dataStore.recommend.totalInstallers = installerData.installersCount;
+                                    window.dataStore.installers = installerData;
+                                    localStorage.setItem('guideInstallerData', JSON.stringify(installerData))
+                                }
+                                //  TODO Redo this?
+                                // if (!isPrePopulated) ACC.productRecommendationComponent.getCity(dataStore, ACC.productRecommendationComponent.findComponents);
+
+                                ACC.productRecommendationComponent.renderRecTemplates();
+                                ACC.productRecommendationComponent.bindEvents();
+
+                                // ACC.productRecommendationComponent.updateAll(dataStore);
+
+                                // This was moved from ACC.recInstallerMap.js
+                                // ACC.recInstallerMap.drawMap();
+                            }
+                        })
+                    }
+                })
+            } else {
+                console.log('datastore didnt populate')
+            }
+        },
+
+    renderRecTemplates: function() {
+        $.each($(".component-id"), function(){
+            var $this = $(this);
+            var templateDataSource = $this.attr('data-store');
+            var templateId = $this.attr('data-component-id');
+            console.log(templateId + 'being fired');
+            componentManager.renderTemplate($this, templateDataSource, templateId, 'recommendation');
+        })
+    },
+
+    bindEvents: function () {
+        console.log('bindEvents fired')
+    //            addproductvideo, oemlisteners/tooltip() getcity berkson etc.
+        ACC.item.bindRecItemEvents();
+        ACC.recInstallerMap.drawMap();
+        ACC.productRecommendationComponent.addSummaryListeners();
+    },
+
+
+
+
+    findComponents: function () {
+        // Look for all components on the page
+        var components = $("div[class*='component-id']");
+
+        components.each(function (i) {
+            var componentObj = $(this);
+            var componentId = componentObj.attr('data-component-id');
+            var componentInit = componentObj.attr('data-component-init');
+            var componentType = componentObj.attr('data-component-type');
+            console.log("componentId=" + componentId + "   |   componentInit=" + componentInit);
+            if (componentId != "" && componentId != undefined) {
+                // check to see if any CSS to load
+                ACC.productRecommendationComponent.loadComponentCSS(componentId);
+                // load component Template
+                ACC.productRecommendationComponent.loadComponentTemplate(componentObj, componentId, componentType, components.length);
+                if (componentInit != "" && componentInit != undefined) {
+                    // check to see if any JS to load
+                    ACC.productRecommendationComponent.loadComponentJS(componentId, componentInit);
+                }
+            }
+        }).promise().done(function () {
+            //Completed
+            //TODO API calls for individual component files still happen after this point - need to push all calls into a promise.all-type function
+            console.log("All Components loaded.....");
+        });
+
+    },
+
+    loadComponentTemplate: function (componentObj, componentId, componentType, arrayLength) {
+        console.log('Loading..... ' + componentId);
+        var $this = componentObj;
+        var templateDataSource = $this.attr('data-store');
+        var templateId = $this.attr('data-component-id');
+        var templateInit = $this.attr('data-component-init');
+        var templateType = $this.attr('data-component-type');
+        // call createTemplate for each component
+        ACC.productRecommendationComponent.setTemplate(componentObj, templateId, templateDataSource, templateType, templateInit, arrayLength);
+        for (var i = 0; i < window.dataStore.recommend.recommendedProducts.length; i++) {
+            ACC.productRecommendationComponent.addProductVideo(window.dataStore.recommend.recommendedProducts[i].videoUrl, window.dataStore.recommend.recommendedProducts[i].productCode)
+        }
+        for (var i = 0; i < window.dataStore.recommend.oemProducts.length; i++) {
+            ACC.productRecommendationComponent.addProductVideo(window.dataStore.recommend.oemProducts[i].videoUrl, window.dataStore.recommend.oemProducts[i].productCode)
+        }
+    },
+
+    loadComponentCSS: function (componentId) {
+        var links = $("link[rel='stylesheet']");
+        var deviceType = "desktop";
+        if ($('body').hasClass('device-desktop') || $('body').hasClass('device-tablet')) {
+            var deviceType = "desktop";
+        } else if ($('body').hasClass('device-mobile')) {
+            var deviceType = "mobile";
+        }
+        var cssDirectory = ACC.productRecommendationComponent.baseComponentURL + componentId + "/";
+        var needCSS = true;
+
+        var cssCallback = function () {
+            console.log("CSS File Loaded");
+            var selector = $(this).attr('data-selector')
+            //css loaded, show component if ready
+            //TODO re-enable this after async issues solved
+            //  $('.' + selector + '-container').parent().removeClass('hidden');
+        }
+
+        if (componentId != "" && componentId != undefined) {
+            var componentName = componentId + ".css";
+            for (var i = 0; i < links.length; i++) {
+                if (links[i].href.indexOf(cssDirectory + componentName) > 1)
+                    needCSS = false;
+            }
+            if (needCSS) {
+                var ls = document.createElement('link');
+                ls.rel = "stylesheet";
+                ls.href = cssDirectory + componentName;
+                ls.setAttribute('data-selector', componentId);
+                // most browsers
+                ls.onload = cssCallback;
+                // IE 6 & 7
+                // ls.onreadystatechange = function () {
+                //     if (this.readyState == 'complete') {
+                //         cssCallback();
+                //     }
+                // }
+                // check to see if file exists
+                var fileExists = true;
+                if (fileExists) {
+                    document.getElementsByTagName('head')[0].appendChild(ls);
+
+                }
+            }
+            // Remove spinner from component
+            $('.component-id-' + componentId).removeClass('loading');
+        }
+    },
+
+    loadComponentJS: function (componentId, componentInit) {
+        var links = $("script");
+        var deviceType = "responsive";
+        if ($('body').hasClass('device-desktop') || $('body').hasClass('device-tablet')) {
+            var deviceType = "responsive";
+        } else if ($('body').hasClass('device-mobile')) {
+            var deviceType = "mobile";
+        }
+        var jsDirectory = ACC.productRecommendationComponent.baseComponentURL + componentId + "/";
+        var needjS = true;
+
+        if (componentId != "" && componentId != undefined && componentInit != "" && componentInit != undefined) {
+            var componentName = "acc." + componentId + ".js";
+            for (var i = 0; i < links.length; i++) {
+                if (links[i].src.indexOf(jsDirectory + componentName) > 1)
+                    needjS = false;
+            }
+            if (needjS) {
+                var js = document.createElement('script');
+                js.type = "text/javascript";
+                js.src = jsDirectory + componentName;
+
+                // check to see if file exists
+                var fileExists = true;
+                if (fileExists) {
+                    document.getElementsByTagName('html')[0].appendChild(js);
+                }
+            }
+
+        }
+    },
+
+    compileAllTemplates: function (templateArray) {
+        $.when.apply(null, templateArray)
+            .then(function (data) {
+                // TODO compile templates and register partials here
+            })
+
+    },

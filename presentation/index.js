@@ -69,7 +69,6 @@ export default class Presentation extends React.Component {
             overview and brief comparison
           </Text>
         </Slide>
-
         <Slide transition={['slide']} bgColor="primary">
           <ImageBar active={{ jq: true }} />
           <Heading size={1} fit caps lineHeight={1} textColor="secondary">
@@ -79,7 +78,6 @@ export default class Presentation extends React.Component {
             homebrew framework solution
           </Text>
         </Slide>
-
         <Slide transition={['slide']} bgColor="primary">
           <ImageBar active={{ jq: true }} />
           <Heading size={1} fit caps lineHeight={1} textColor="secondary">
@@ -135,7 +133,7 @@ export default class Presentation extends React.Component {
             { loc: [0, 3], note: 'Complexity increases' },
             { loc: [143, 152], note: 'Debugging becomes difficult' },
           ]}
-        />
+        />``
         <CodeSlide
           textSize="1.3vw"
           bgColor="code"
@@ -162,7 +160,6 @@ export default class Presentation extends React.Component {
             hybrid ssr/frontend framework
           </Text>
         </Slide>
-
         <Slide transition={['slide']} bgColor="primary">
           <ImageBar active={{ vue: true }} />
           <Heading size={1} caps lineHeight={1} textColor="secondary" textAlign="right">
@@ -174,8 +171,7 @@ export default class Presentation extends React.Component {
           <Layout>
             <Fill>
               <Text margin="10px" bgColor="secondary" textColor="primary">
-                {' '}
-                Pros{' '}
+                Pros
               </Text>
               <Appear>
                 <List className="pros">
@@ -239,7 +235,6 @@ export default class Presentation extends React.Component {
             server side rendering
           </Text>
         </Slide>
-
         <Slide transition={['slide']} bgColor="primary">
           <ImageBar active={{ java: true }} />
           <Heading size={1} caps lineHeight={1} textColor="secondary" textAlign="right">
@@ -289,7 +284,6 @@ export default class Presentation extends React.Component {
             client side rendered SPA for rubbr.com
           </Text>
         </Slide>
-
         <Slide transition={['slide']} bgColor="primary">
           <ImageBar active={{ react: true }} />
           <Heading size={1} caps lineHeight={1} textColor="secondary" textAlign="right">
@@ -374,7 +368,6 @@ export default class Presentation extends React.Component {
           </List>
           {/* <Image src={reactLogo} height="10vw" /> */}
         </Slide>
-
         {false && (
           <Slide transition={['fade']} bgColor="secondary" textColor="primary">
             <BlockQuote>

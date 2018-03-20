@@ -25,7 +25,7 @@ import createTheme from 'spectacle/lib/themes/default';
 
 import jq from '../assets/jq.png';
 import java from '../assets/java.png';
-import reactLogo from '../assets/react.png';
+import reactLogo from '../assets/React-icon.svg';
 import vue from '../assets/vue.png';
 import ssrMov from '../assets/ui.gif';
 import rubbr from '../assets/react.jpg';
@@ -133,7 +133,6 @@ export default class Presentation extends React.Component {
             { loc: [0, 270], title: '.hbs templates' },
             { loc: [0, 1], note: 'Starts out simple' },
             { loc: [0, 3], note: 'Complexity increases' },
-            { loc: [50, 51], note: 'Loading in templates and css' },
             { loc: [143, 152], note: 'Debugging becomes difficult' },
           ]}
         />
@@ -147,6 +146,8 @@ export default class Presentation extends React.Component {
             { loc: [0, 270], title: 'JavaScript Controller Logic' },
             { loc: [0, 1], note: 'Imperative logic' },
             { loc: [12, 13], note: 'Imperative logic' },
+            { loc: [156, 173], note: 'Loading in templates and css' },
+
             { loc: [107, 115], note: 'Manual rendering' },
             { loc: [117, 124], note: 'Manual data binding' },
             { loc: [223, 230], note: 'Lifecycle methods' },
@@ -212,7 +213,7 @@ export default class Presentation extends React.Component {
         <CodeSlide
           textSize="1.3vw"
           bgColor="code"
-          lang="js"
+          lang="jsx"
           showLineNumbers={false}
           code={require('raw-loader!./examples/vue.example')}
           ranges={[
@@ -335,31 +336,44 @@ export default class Presentation extends React.Component {
         <Slide transition={['slide']} bgColor="primary">
           <Image src={rubbr} />
         </Slide>
-        {false && (
-          <Slide transition={['slide']} bgColor="tertiary">
-            <Heading size={6} textColor="primary" caps>
-              Typography
-            </Heading>
-            <Heading size={1} textColor="secondary">
-              Heading 1
-            </Heading>
-            <Heading size={2} textColor="secondary">
-              Heading 2
-            </Heading>
-            <Heading size={3} textColor="secondary">
-              Heading 3
-            </Heading>
-            <Heading size={4} textColor="secondary">
-              Heading 4
-            </Heading>
-            <Heading size={5} textColor="secondary">
-              Heading 5
-            </Heading>
-            <Text size={6} textColor="secondary">
-              Standard text
-            </Text>
-          </Slide>
-        )}
+        <Slide transition={['slide']} bgColor="tertiary" bgImage={reactLogo}>
+          <Heading size={1} textColor="primary" fit caps>
+            Next Steps
+          </Heading>
+          <Heading size={3} fit caps textColor="secondary">
+            implement POC React/SSR hybrid
+          </Heading>
+          <List textColor="primary" className="next-list">
+            <Appear>
+              <ListItem>Strive for best of both worlds</ListItem>
+            </Appear>
+            <Appear>
+              <ListItem>Render above the fold static content SS</ListItem>
+            </Appear>
+            <Appear>
+              <ListItem>Render all interactive content with React via AJAX</ListItem>
+            </Appear>
+            <Appear>
+              <ListItem>Redux to share state across multiple root elements</ListItem>
+            </Appear>
+            <Appear>
+              <ListItem>Unit test UI and Business Logic</ListItem>
+            </Appear>
+            <Appear>
+              <ListItem>Build process that allows for extensibility/portability</ListItem>
+            </Appear>
+            <Appear>
+              <ListItem>SEO Strategy</ListItem>
+            </Appear>
+            <Appear>
+              <ListItem>Analytics Tagging/Data Layer Integration Strategy</ListItem>
+            </Appear>
+            <Appear>
+              <ListItem>Integration with client-side A/B testing</ListItem>
+            </Appear>
+          </List>
+          {/* <Image src={reactLogo} height="10vw" /> */}
+        </Slide>
 
         {false && (
           <Slide transition={['fade']} bgColor="secondary" textColor="primary">

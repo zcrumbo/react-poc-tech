@@ -28,10 +28,12 @@ h5 {
 	display: flex;
 	background-color: rgba(255, 255, 255, 0.7);
 	height: 12vh;
-	margin-top: 5%;
+	margin-top: 3%;
+	justify-content: space-evenly;
 }
-.image-bar-bg .img {
-	margin: 4%;
+.image-bar-bg img {
+	margin: 1%;
+	max-height: 80%;
 }
 div.img-list-split {
 	display: flex;
@@ -43,27 +45,53 @@ ul.dev-list.debug-list {
 	width: 50%;
 }
 ul.dev-list.primary li {
-	font-size: 3.1vw;
+	font-size: 165%;
+}
+ul.dev-list.primary li.sub {
+	font-size: 125%;
 }
 ul.dev-list li.sub {
 	list-style: none;
 	color: #004e75;
-	margin-left: 5vw;
-	font-size: 2.1vw;
+	margin-left: 13%;
+	font-size: 95%;
 }
 
 ul.dev-list li {
 	font-weight: bold;
-	font-size: 2.8vw;
+	font-size: 124%;
 	line-height: 150%;
 }
 
-ul.pros li,
-ul.cons li {
-	font-size: 1.7vw;
-	padding: 0 0 0 0.6vw;
-	line-height: 130%;
+ul.bg {
+	background-color: rgba(0, 0, 0, 0.2);
+	margin: 0 3% 0 0;
 }
+ul.bg.white {
+	background-color: rgba(255, 255, 255, 0.4);
+}
+ul.pros li,
+ul.cons li,
+ul.costs li,
+ul.benefits li {
+	font-size: 100%;
+	font-weight: 600;
+	line-height: 130%;
+	display: block;
+	/*	text-indent: -0.9em;
+	padding-left: 1.1em;*/
+	margin-top: 15px;
+	padding: 2% 3%;
+	color: white;
+}
+ul.costs li {
+	color: #004e75;
+}
+.costText {
+	color: #004e75;
+	font-style: italic;
+}
+
 ul.pros li {
 	color: #03a9fc;
 }

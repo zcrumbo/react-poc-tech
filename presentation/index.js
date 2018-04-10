@@ -70,7 +70,7 @@ export default class Presentation extends React.Component {
           <Heading size={3} fit caps textColor="secondary">
             key results and lessons
           </Heading>
-          <List textColor="primary" className="dev-list primary">
+          <List textColor="primary" className="dev-list " fit>
             <Appear>
               <ListItem>Significant Performance Increases</ListItem>
             </Appear>
@@ -136,22 +136,38 @@ export default class Presentation extends React.Component {
             Development
           </Heading>
           <List textColor="primary" className="dev-list primary">
-            <ListItem>Smaller, reusable components</ListItem>
-            <ListItem className="sub">
-              <em>faster development, fewer bugs</em>
-            </ListItem>
-            <ListItem>Faster build process</ListItem>
-            <ListItem className="sub">
-              <em>more iteration, less waiting</em>
-            </ListItem>
-            <ListItem>It's all just JavaScript</ListItem>
-            <ListItem className="sub">
-              <em>easier to train and learn</em>
-            </ListItem>
-            <ListItem>Large Dev Community</ListItem>
-            <ListItem className="sub">
-              <em>easier to find answers</em>
-            </ListItem>
+            <Appear>
+              <ListItem>Smaller, reusable components</ListItem>
+            </Appear>
+            <Appear>
+              <ListItem className="sub">
+                <em>faster development, fewer bugs</em>
+              </ListItem>
+            </Appear>
+            <Appear>
+              <ListItem>Faster build process</ListItem>
+            </Appear>
+            <Appear>
+              <ListItem className="sub">
+                <em>more iteration, less waiting</em>
+              </ListItem>
+            </Appear>
+            <Appear>
+              <ListItem>It's all just JavaScript</ListItem>
+            </Appear>
+            <Appear>
+              <ListItem className="sub">
+                <em>easier to train and learn</em>
+              </ListItem>
+            </Appear>
+            <Appear>
+              <ListItem>Large Dev Community</ListItem>
+            </Appear>
+            <Appear>
+              <ListItem className="sub">
+                <em>easier to find answers</em>
+              </ListItem>
+            </Appear>
           </List>
         </Slide>
         <Slide transition={['slide']} bgColor="tertiary" bgImage={reactLogo}>
@@ -163,35 +179,81 @@ export default class Presentation extends React.Component {
               <Image src={devTools} />
             </div>
             <List textColor="primary" className="dev-list debug-list">
-              <ListItem>Simpler codebase</ListItem>
-              <ListItem className="sub">
-                <em>easier to understand and reason through</em>
-              </ListItem>
-              <ListItem>Sophisticated tools</ListItem>
-              <ListItem className="sub">
-                <em>easier to understand code on page</em>
-              </ListItem>
-              <ListItem>Built to be tested</ListItem>
-              <ListItem className="sub">
-                <em>Automated testing reduces defects before QA even sees them</em>
-              </ListItem>
+              <Appear>
+                <ListItem>Simpler codebase</ListItem>
+              </Appear>
+              <Appear>
+                <ListItem className="sub">
+                  <em>easier to understand and reason through</em>
+                </ListItem>
+              </Appear>
+              <Appear>
+                <ListItem>Sophisticated tools</ListItem>
+              </Appear>
+              <Appear>
+                <ListItem className="sub">
+                  <em>easier to understand code on page</em>
+                </ListItem>
+              </Appear>
+              <Appear>
+                <ListItem>Built to be tested</ListItem>
+              </Appear>
+              <Appear>
+                <ListItem className="sub">
+                  <em>Automated testing reduces defects before QA even sees them</em>
+                </ListItem>
+              </Appear>
             </List>
           </div>
+        </Slide>
+        <Slide transition={['slide']} bgColor="tertiary" bgImage={reactLogo}>
+          <Heading size={1} textColor="primary" fit className="header" caps>
+            <span className="costText">Costs </span>&nbsp;&nbsp; Benefits
+          </Heading>
+          <Heading size={6} caps fit textColor="primary">
+            development/training costs, efficiency/performance benefits
+          </Heading>
+          <Layout>
+            <Fill>
+              <Appear>
+                <List className="costs bg white costText">
+                  <ListItem>2 weeks to codify norms/practices</ListItem>
+                  <ListItem>2-3 weeks to train up team on simple feature</ListItem>
+                  <ListItem>2-3 weeks to convert existing componentized feature</ListItem>
+                  <ListItem>4 weeks to convert non-componentized feature</ListItem>
+                </List>
+              </Appear>
+            </Fill>
+            <Fill>
+              <Appear>
+                <List className="benefits bg">
+                  <ListItem>Faster Pages = Higher Conversion</ListItem>
+                  <ListItem>New Features should take 3-4 weeks vs 5-6 weeks</ListItem>
+                  <ListItem>Automated tests should reduce bugs by 50%</ListItem>
+                  <ListItem>Easier to maintain: costs decrease over time </ListItem>
+                </List>
+              </Appear>
+            </Fill>
+          </Layout>
         </Slide>
         <Slide transition={['slide']} bgColor="tertiary" bgImage={reactLogo}>
           <Heading size={1} textColor="primary" fit caps className="header">
             Next Steps
           </Heading>
+          <div className="image-bar-bg">
+            <Image src={ngLogo} />
+            <Image src={reactPng} />
+          </div>
 
-          <List textColor="primary" className="dev-list">
+          <List textColor="primary" className="dev-list ">
             <ListItem>Compare notes with Huntersville Team</ListItem>
             <ListItem className="sub">
               <em>Consult with ATD's Angular experts to determine the best framework solution</em>
             </ListItem>
-            <div className="image-bar-bg">
-              <Image src={ngLogo} />
-              <Image src={reactPng} />
-            </div>
+            <ListItem>Move forward with new process</ListItem>
+            <ListItem className="sub">
+              <em>Rebuild payment/confirmation page with new framework</em>
+            </ListItem>
           </List>
         </Slide>
       </Deck>

@@ -157,7 +157,6 @@ export default class Presentation extends React.Component {
           code={require('raw-loader!./examples/container.example')}
           ranges={[
             {
-              loc: [0, 18],
               title: 'Container Pattern - component composition',
             },
             { loc: [1, 2], note: 'Utility functions for AJAX calls' },
@@ -193,7 +192,6 @@ export default class Presentation extends React.Component {
           code={require('raw-loader!./examples/stateless.example')}
           ranges={[
             {
-              loc: [0, 18],
               title: 'Stateless functional components',
             },
             { loc: [1, 2], note: 'Using proptypes instead of TS or Flow' },
@@ -220,7 +218,6 @@ export default class Presentation extends React.Component {
           code={require('raw-loader!./examples/class.example')}
           ranges={[
             {
-              loc: [0, 18],
               title: 'Class based component',
             },
             { loc: [0, 1], note: 'Using flow for type checking' },
@@ -235,6 +232,19 @@ export default class Presentation extends React.Component {
             },
           ]}
         />
+        <CodeSlide
+          textSize="1.3vw"
+          bgColor="code"
+          lang="jsx"
+          showLineNumbers={false}
+          code={require('raw-loader!./examples/async.example')}
+          ranges={[
+            {
+              loc: [2, 3],
+              title: 'Dynamic import for webpack code splitting',
+            },
+          ]}
+        />
         <Slide transition={['slide']} bgColor="tertiary" bgImage={reactLogo}>
           <Heading size={1} textColor="primary" fit className="header" caps>
             React POC
@@ -245,6 +255,9 @@ export default class Presentation extends React.Component {
           <List textColor="primary" className="dev-list " fit>
             <Appear>
               <ListItem>Redux not necessary w/ Portals</ListItem>
+            </Appear>
+            <Appear>
+              <ListItem>React 'library' flexibility was helpful</ListItem>
             </Appear>
             <Appear>
               <ListItem>Significant Performance Increases</ListItem>

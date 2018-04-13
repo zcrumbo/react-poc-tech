@@ -1,0 +1,128 @@
+import React from 'react';
+import Sticky from 'react-stickynode';
+import AsyncComponent from 'Utils/async-component.js';
+import PropTypes from 'prop-types';
+import { TabsBar } from './components/tabs-bar.component.js';
+import { Sizes } from './components/sizes.component.js';
+
+import './product-tabs.component.less';
+
+export class ProductTabs extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      activeTab: 'availablesizes-tab',
+    };
+    // TODO set activeTab based on scroll position
+  }
+
+  render() {
+    const { product, scenario, updateLocationData, powerReviews, showPromos } = this.props;
+
+    return (
+      <section id="tabs-section">
+        <Sticky innerZ={1000}>
+          <TabsBar
+            variantCount={product.productVariantCount}
+            activeTab={this.state.activeTab}
+            sticky={this.state.sticky}
+            scenario={scenario}
+            setRef={this.setHeaderEl}
+            showPromos={showPromos}
+          />
+        </Sticky>
+        <Sizes
+          diameters={product.productAvailableDiameters}
+          styleId={product.brandStyleId}
+          productType={product.productType}
+          scenario={scenario}
+          updateLocationData={updateLocationData}
+          renderIf={!scenario.isFitted}
+        />
+        <AsyncComponent
+          bundleWillLoad={async () => {
+            const {
+              Overview,
+            } = await import(/* webpackChunkName: "overview" */ './components/overview.component.js');
+            return Overview;
+          }}
+          bundleDidLoad={Overview => <Overview product={product} />}
+        />
+        <AsyncComponent
+          bundleWillLoad={async () => {
+            const {
+              Specs,
+            } = await import(/* webpackChunkName: "specs" */ './components/specs.component.js');
+            return Specs;
+          }}
+          bundleDidLoad={Specs => <Specs attributeMap={product.productSpecs.attributeMap} />}
+        />
+        <AsyncComponent
+          bundleWillLoad={async () => {
+            const {
+              Reviews,
+            } = await import(/* webpackChunkName: "reviews" */ './components/reviews.component.js');
+            return Reviews;
+          }}
+          bundleDidLoad={Reviews => <Reviews powerReviews={powerReviews} product={product} />}
+        />
+        <AsyncComponent
+          bundleWillLoad={async () => {
+            const {
+              Warranty,
+            } = await import(/* webpackChunkName: "warrranty" */ './components/warranty.component.js');
+            return Warranty;
+          }}
+          bundleDidLoad={Warranty => <Warranty warranty={product.productWarranty} />}
+        />
+        <AsyncComponent
+          bundleWillLoad={async () => {
+            const {
+              Offers,
+            } = await import(/* webpackChunkName: "offers" */ './components/offers.component.js');
+            return Offers;
+          }}
+          bundleDidLoad={Offers => (
+            <Offers
+              promotions={product.productPromotions}
+              scenario={scenario}
+              renderIf={showPromos}
+            />
+          )}
+        />
+        {/* <Overview product={product} /> 
+        <Specs attributeMap={product.productSpecs.attributeMap} />
+        <Reviews powerReviews={powerReviews} product={product} />
+        <Warranty warranty={product.productWarranty} />
+        <Offers promotions={product.productPromotions} scenario={scenario} renderIf={showPromos} /> */}
+      </section>
+    );
+  }
+}
+
+ProductTabs.propTypes = {
+  product: PropTypes.shape({
+    productVariantCount: PropTypes.string,
+    productAvailableDiameters: PropTypes.arrayOf(PropTypes.string),
+    productSpecs: PropTypes.shape({
+      attributeMap: PropTypes.arrayOf(
+        PropTypes.shape({
+          key: PropTypes.string.isRequired,
+          value: PropTypes.shape({
+            label: PropTypes.string,
+            rank: PropTypes.number,
+            value: PropTypes.string,
+          }),
+        }),
+      ),
+    }),
+    productWarranty: PropTypes.object,
+    productPromotions: PropTypes.arrayOf(PropTypes.object),
+  }),
+  scenario: PropTypes.shape({
+    isFitted: PropTypes.bool,
+  }),
+  updateLocationData: PropTypes.func.isRequired,
+  powerReviews: PropTypes.object,
+  showPromos: PropTypes.bool.isRequired,
+};

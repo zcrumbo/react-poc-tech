@@ -1,0 +1,184 @@
+// @flow
+import React from 'react';
+import { getSizingData, getStyleDetails } from 'Utils/api.js';
+
+import './tire-size.component.less';
+
+export type Props = {
+  product: {
+    brandStyleId: string,
+    productType: string,
+    group: number,
+    productAvailableWidths: Array<string>,
+  },
+  openFitmentModal: $Untyped,
+  renderIf: boolean,
+};
+
+export type State = {
+  width: string,
+  diameter: string,
+  diameters: Array<string>,
+  ratio: string,
+  ratios: Array<string>,
+  variantSizeUrl: string,
+};
+
+export class TireSize extends React.Component<Props, State> {
+  constructor(props: Props) {
+    super(props);
+    this.state = {
+      width: '',
+      diameter: '',
+      diameters: [],
+      ratio: '',
+      ratios: [],
+      variantSizeUrl: '',
+    };
+  }
+
+  getRatios(event: SyntheticEvent<HTMLInputElement>): Promise<$Untyped> {
+    const { brandStyleId, productType } = this.props.product;
+    const dimObjs = [{ type: 'width', value: event.currentTarget.value }];
+
+    return getSizingData(brandStyleId, productType, dimObjs)
+      .then(res => res.data.fitment)
+      .catch(err => {
+        console.error(err);
+        return null;
+      });
+  }
+  getDiameters(event: SyntheticEvent<HTMLInputElement>): Promise<$Untyped> {
+    const { brandStyleId, productType } = this.props.product;
+    const dimObjs = [
+      { type: 'width', value: this.state.width },
+      { type: 'aspectratio', value: event.currentTarget.value },
+    ];
+    return getSizingData(brandStyleId, productType, dimObjs)
+      .then(res => res.data.fitment)
+      .catch(err => {
+        console.error(err);
+        return null;
+      });
+  }
+  getSizeVariantUrl(event: SyntheticEvent<HTMLInputElement>): Promise<$Untyped> {
+    const { productType, brandStyleId } = this.props.product;
+    const { width, ratio } = this.state;
+    const diameter = event.currentTarget.value;
+
+    return getStyleDetails(productType, brandStyleId, width, ratio, diameter)
+      .then(res => {
+        return res.data.products[0].variantUrl;
+      })
+      .catch(() => null);
+  }
+
+  render() {
+    // computed values - would be abstracted to reselect if using redux
+    const isFormValid = this.state.width && this.state.ratio && this.state.diameter;
+    const showShopByVehicle =
+      this.props.product.productType === 'TIRE' &&
+      this.props.product.group !== 31 &&
+      this.props.product.group !== 30;
+    const { product, openFitmentModal } = this.props;
+
+    return this.props.renderIf ? (
+      <div id="tire-size" className="${noBorderClass}">
+        {/* open legacy jquery fitment module */}
+        {showShopByVehicle && (
+          <a
+            onClick={event => openFitmentModal(event.currentTarget)}
+            data-template="tabs"
+            data-selected-form="tires"
+            data-tab="1"
+            data-sub-tab="1"
+            data-hide-tabs="1,2,3"
+            data-hide-sub-tabs="2"
+            data-fast-fit="false"
+            className="link openFitmentModal at_tires_open_fitment_modal_shop_by_vehicle_tires btn btn-link blueButton"
+          >
+            Shop by Vehicle&nbsp;&nbsp;<span className="sprite chevron-right" />
+          </a>
+        )}
+
+        <div id="sizingFitment">
+          <div className="by-size-fitment">
+            <div className="ddl-title">
+              <h4>Enter your tire size</h4>
+            </div>
+            <div className="sizing-wrapper">
+              <form className="dropdowns-wrapper" name="bySizeFitmentForm">
+                <div className="sizing-ddls">
+                  <select
+                    onChange={event => {
+                      this.setSizingData(event, 'width');
+                      this.getRatios(event).then(ratios => {
+                        this.setState({ ratios });
+                      });
+                    }}
+                    value={this.state.width}
+                  >
+                    <option value="">--</option>
+                    {product.productAvailableWidths &&
+                      product.productAvailableWidths.map(width => {
+                        return <option key={width}>{width}</option>;
+                      })}
+                  </select>
+                  <select
+                    onChange={event => {
+                      this.setSizingData(event, 'ratio');
+                      this.getDiameters(event).then(diameters => {
+                        this.setState({ diameters });
+                      });
+                    }}
+                    disabled={!this.state.width}
+                    value={this.state.ratio}
+                  >
+                    <option>--</option>
+                    {this.state.ratios.map(ratio => {
+                      return <option key={ratio}>{ratio}</option>;
+                    })}
+                  </select>
+                  <select
+                    value={this.state.diameter}
+                    disabled={!this.state.ratio}
+                    onChange={event => {
+                      this.setSizingData(event, 'diameter');
+                      this.getSizeVariantUrl(event).then(url => {
+                        this.setState({ variantSizeUrl: url });
+                      });
+                    }}
+                  >
+                    <option>--</option>
+                    {this.state.diameters.map(diameter => {
+                      return <option key={diameter}>{diameter}</option>;
+                    })}
+                  </select>
+                </div>
+              </form>
+              {isFormValid ? (
+                <button
+                  id="goBtn"
+                  className="at_fitment_go_btn green-light"
+                  onClick={() => this.shopTireSize()}
+                >
+                  Go <i className="fa fa-chevron-right icon-chevron-right" />
+                </button>
+              ) : (
+                <button id="goBtn" className="at_fitment_go_btn grey btn lg" disabled="disabled">
+                  Go <i className="fa fa-chevron-right icon-chevron-right" />
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+    ) : null;
+  }
+  setSizingData(event: SyntheticEvent<HTMLInputElement>, type: string) {
+    this.setState({ [type]: event.currentTarget.value });
+  }
+  shopTireSize() {
+    window.location.href = this.state.variantSizeUrl;
+  }
+}

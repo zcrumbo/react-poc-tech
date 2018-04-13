@@ -53,8 +53,17 @@ ul.dev-list.primary li.sub {
 ul.dev-list li.sub {
 	list-style: none;
 	color: #004e75;
-	margin-left: 13%;
+	margin-left: 10%;
 	font-size: 95%;
+	line-height: 90%;
+	margin-bottom: .5%;
+}
+.ng-slide ul {
+	/* background-color:rgba(255, 255, 255, 0.1); */
+}
+.ng-slide ul.dev-list li.sub {
+	color: #230505;
+
 }
 
 ul.dev-list li {
@@ -103,6 +112,8 @@ ul.next-list li {
 	font-size: 2.3vw;
 	line-height: 170%;
 }
+
+
 /* PrismJS 1.12.2
 http://prismjs.com/download.html#themes=prism-okaidia&languages=markup+css+clike+javascript */
 /**

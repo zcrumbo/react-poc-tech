@@ -1,0 +1,177 @@
+import React from 'react';
+import { getProductDetails, getPromotionsData, addToCart } from 'Utils/api.js';
+import PropTypes from 'prop-types';
+import { DetailComponent } from './product-detail.component.js';
+import {
+  Thumbnails,
+  PricePanel,
+  AtcButton,
+  TireSize,
+  Delivery,
+  Promotions,
+  ProductTabs,
+} from './components';
+import './product-detail.component.less';
+
+export default class DetailDesktop extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      products: [
+        {
+          productSku: '',
+          productMedia: { thumbnailUrls: [] },
+          productDelivery: {},
+          productPromotions: [],
+          productSpecs: { attributeMap: [] },
+          productWarranty: {},
+        },
+      ],
+      qty: 4,
+      cartId: this.props.cartId,
+      scenario: { ...this.props.initialScenario, showPromos: true },
+    };
+
+    this.updateQty = this.updateQty.bind(this);
+    this.updateLocationData = this.updateLocationData.bind(this);
+    this.addProductToCart = this.addProductToCart.bind(this);
+  }
+  componentDidMount() {
+    getProductDetails(this.props.sku, this.state.scenario.zip)
+      .then(res => {
+        this.setState({ products: res.data.products });
+        this.shouldShowPromos();
+      })
+      .catch(err => {
+        console.error(err);
+      });
+  }
+  componentWillReceiveProps(nextProps) {
+    this.shouldShowPromos(nextProps);
+    // TODO need to get this just in state and have it update with props changes
+  }
+
+  render() {
+    const { productSku, price, salePrice, productMedia, productType } = this.state.products[0];
+
+    return (
+      <div>
+        <DetailComponent>
+          {/* DetailComponent is an HOC that returns an array of Portals to populate the divs specified in the child target props */}
+          <Thumbnails
+            thumbnails={productMedia.thumbnailUrls}
+            target={document.getElementById('thumbnails-root')}
+          />
+          <PricePanel
+            productSku={productSku}
+            price={price}
+            salePrice={salePrice}
+            qty={this.state.qty}
+            target={document.getElementById('price-qty-root')}
+            updateQty={this.updateQty}
+            isMap={this.props.initialScenario.isMap}
+          />
+          <AtcButton
+            target={document.getElementById('button-root')}
+            productSku={productSku}
+            productType={productType}
+            zip={this.state.scenario.zip}
+            qty={this.state.qty}
+            cartId={this.state.cartId}
+            addItemToCart={this.addProductToCart}
+            isMap={this.props.initialScenario.isMap}
+          />
+          <TireSize
+            target={document.getElementById('tire-size-root')}
+            product={this.state.products[0]}
+            openFitmentModal={ACC.fitmentModule.openFitmentModal}
+            renderIf={!this.state.scenario.isFitted}
+          />
+          <Delivery
+            target={document.getElementById('delivery-root')}
+            products={this.state.products}
+            updateLocationData={this.updateLocationData}
+            scenario={this.state.scenario}
+          />
+          <Promotions
+            promotions={this.state.products[0].productPromotions}
+            showPromos={this.state.scenario.showPromos}
+            qty={this.state.qty}
+            target={document.getElementById('promotions-root')}
+          />
+          <ProductTabs
+            product={this.state.products[0]}
+            promotions={this.state.products[0].productPromotions}
+            scenario={this.state.scenario}
+            updateLocationData={this.updateLocationData}
+            powerReviews={this.props.powerReviews}
+            target={document.getElementById('product-tabs-root')}
+            showPromos={this.state.scenario.showPromos}
+          />;
+        </DetailComponent>
+      </div>
+    );
+  }
+  updateQty(e) {
+    this.setState({ qty: e.target.value });
+  }
+  addProductToCart(zip, qty, sku, cartId) {
+    addToCart(zip, qty, sku, cartId)
+      .then(res => {
+        document.cookie = `cartId=${res.data.cartId};path=/`;
+        window.location.href = `/tirebuyer/cart?cartId=${res.data.cartId}`;
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  }
+  updateLocationData(zip) {
+    const sku = this.props.sku;
+    this.setState(prevState => {
+      return {
+        zip,
+        scenario: Object.assign({}, prevState.scenario, { zip }),
+      };
+    });
+    document.cookie = `TBZIP=${zip}`;
+
+    getPromotionsData(zip, sku).then(res => {
+      const newPromos = res.data.products[0].productPromotions;
+      const newShipping = res.data.products[0].productDelivery;
+      // update state with new arrays for promos and shipping. use function structure to have access to previous state
+      // Object.assign returns a new object when 1st param is empty object, and is needed to update deeply nested state
+      // https://reactjs.org/docs/faq-state.html#what-is-the-difference-between-passing-an-object-or-a-function-in-setstate
+      this.setState(prevState => {
+        return {
+          products: [Object.assign({}, prevState.products[0], { productPromotions: newPromos })],
+        };
+      });
+      this.setState(prevState => {
+        return {
+          products: [Object.assign({}, prevState.products[0], { productDelivery: newShipping })],
+        };
+      });
+    });
+  }
+  shouldShowPromos(nextProps) {
+    // TODO this is too complicated. How else to get this as top level prop for debugging
+    const isMap = nextProps ? nextProps.initialScenario.isMap : this.props.initialScenario.isMap;
+    let shouldShow = false;
+    const promotions = this.state.products[0].productPromotions;
+    const rebates = promotions.filter(promo => (promo.rebateDollarOff ? true : false));
+    if (rebates.length) shouldShow = true;
+    if (!isMap && promotions.length) shouldShow = true;
+    this.setState(prevState => ({
+      scenario: { ...prevState.scenario, showPromos: shouldShow },
+    }));
+  }
+}
+
+DetailDesktop.propTypes = {
+  powerReviews: PropTypes.object.isRequired,
+  initialScenario: PropTypes.shape({
+    isMap: PropTypes.bool.isRequired,
+  }),
+  sku: PropTypes.string.isRequired,
+  cartId: PropTypes.string,
+};

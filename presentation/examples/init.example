@@ -1,0 +1,29 @@
+import React from 'react';
+import ReactDOM from 'react-dom';
+import DetailDesktop from './product-detail.container.js';
+
+const rootEl = document.getElementById('pd-app-root');
+const sku = rootEl.getAttribute('data-sku');
+const cartId = rootEl.getAttribute('data-cartId');
+const initialScenario = {
+  zip: rootEl.getAttribute('data-zip'),
+  staggered: JSON.parse(rootEl.getAttribute('data-staggered')),
+  isMap: JSON.parse(rootEl.getAttribute('data-isMap')),
+  isFitted: JSON.parse(rootEl.getAttribute('data-isFitted')),
+};
+const powerReviews = {
+  apiKey: rootEl.getAttribute('data-pr_api_key'),
+  merchant_group_id: rootEl.getAttribute('data-pr_merchant_group_id'),
+  merchant_id: rootEl.getAttribute('data-pr_merchant_id'),
+  page_id: rootEl.getAttribute('data-brandStyle'),
+};
+
+ReactDOM.render(
+  <DetailDesktop
+    sku={sku}
+    initialScenario={initialScenario}
+    cartId={cartId}
+    powerReviews={powerReviews}
+  />,
+  rootEl,
+);

@@ -1,0 +1,31 @@
+import React from 'react';
+import PropTypes from 'prop-types';
+
+import { MailInRebate } from './components/mailInRebate.component';
+import { ShipToDealer } from './components/shipToDealer.component';
+
+import './promotions.component.less';
+
+export const Promotions = ({ promotions = [], showPromos, qty }) =>
+  showPromos && qty > 3 ? (
+    <div className="product-promotions row">
+      <div className="promotion-header row">
+        <div className="col-md-12">
+          <strong>More savings available</strong>
+        </div>
+      </div>
+      {promotions.map((promo, index) => {
+        return promo.promotionType === 'RebatePromotion' ? (
+          <MailInRebate promo={promo} key={index} qty={qty} />
+        ) : (
+          <ShipToDealer promo={promo} key={index} qty={qty} showPromos={showPromos} />
+        );
+      })}
+    </div>
+  ) : null;
+
+Promotions.propTypes = {
+  showPromos: PropTypes.func.isRequired,
+  qty: PropTypes.number.isRequired,
+  promotions: PropTypes.arrayOf(PropTypes.object),
+};

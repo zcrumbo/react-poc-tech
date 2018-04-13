@@ -1,0 +1,33 @@
+<%-- Navigation Breadcrumbs --%>
+    <div class="breadcrumb-social-container clearfix">
+    <div id="breadcrumb">
+        <breadcrumb:breadcrumb breadcrumbs="${breadcrumbs}"/>
+    </div>
+</div>
+<%-- React app root element --%>
+<div id="pd-app-root" 
+    data-sku="${product.productSku}" 
+    data-zip="${zipCode}" 
+    data-isMap="${isMAP}"
+    data-staggered="${isStaggered}"
+    data-isFitted="${isFitted}"
+    data-cartId="${cartId}" 
+    data-brandStyle="${product.brandStyleId}"
+    data-pr_api_key="d4b0bbb2-c6e2-4a99-afbf-975633023aa7" 
+    data-pr_merchant_group_id="48902" 
+    data-pr_merchant_id="661273">
+</div>
+<%-- Pricing Static Content--%>
+<div>
+    <div class="price-group row">
+        <div id="price-qty-root" class="price-qty"></div>
+    /div>
+        <div id="button-root"></div> 			
+    </div>
+
+    <%-- ***Tire size component / open fitment modal*** --%>
+    <div id="tire-size-root"></div>
+    
+    <div id="delivery-root"></div>
+
+    <div id="promotions-root"></div>
